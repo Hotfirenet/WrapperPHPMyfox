@@ -1,6 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Wrapper PHP myFox
+ * wrapper myFox
  * 
  * @author Johan V.	www.hotfirenet.Com	twitter.com/hotfirenet
  *

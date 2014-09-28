@@ -1,6 +1,6 @@
 <?php
 /**
- * Wrapper PHP myFox
+ * API PHP myFox
  * 
  * @author Johan V.	www.hotfirenet.Com	twitter.com/hotfirenet
  *
@@ -35,6 +35,20 @@ if(!file_exists('config.php'))
 		$_SESSION['access_token'] =  $parseToken->access_token;
 		$_SESSION['expires_in'] = ($now + $parseToken->expires_in);
 		$_SESSION['refresh_token'] = $parseToken->refresh_token;
+	}
+	
+	//On test si l'id de la station est renseigné
+	if(empty($siteId))
+	{
+		$listClientSite = json_decode($myFox->listClientSite($_SESSION['access_token']));
+		foreach($listClientSite->payload as $payload)
+		{
+			foreach($payload as $items)
+			{
+				echo 'l\'identifiant de la centrale <b>' . $items->label . '</b> a pour identifiant: <b>' . $items->siteId .'</b>, merci de renseigner le fichier <b>config.php</b> !<br />';
+			}
+		}
+		exit();
 	}
 	
 	/**
@@ -88,33 +102,22 @@ if(!file_exists('config.php'))
 		$i++;
 	}	
 	
-	echo $myFox->listClientSite($_SESSION['access_token']);
-
-	echo '<br />';	
+	switch($commande)
+	{
+		case 'etat':
+			echo $myFox->getSecurity($siteId, $_SESSION['access_token']);
+			break;
+			
+		case 'protection':
+			echo $myFox->setSecurity($siteId, $parametre1, $_SESSION['access_token']);
+			break;
+			
+		case 'scenario':
+			echo $myFox->scenario($siteId, $parametre1, $parametre2, $_SESSION['access_token']);
+			break;			
+			
+		default:
+		
+			break;
 	
-	echo $myFox->getSecurity($siteId, $_SESSION['access_token']);
-
-	//Ok	
-	//echo $myFox->setSecurity($siteId, 'armed', $_SESSION['access_token']);
-
-	echo '<br />';
-	
-	echo $myFox->listScenario($siteId, $_SESSION['access_token']);
-	
-	echo '<br />';
-	
-	echo $myFox->scenario($siteId, $scenarioId, 'enable', $_SESSION['access_token']);
-	echo '<br />';
-	echo $myFox->scenario($siteId, $scenarioId, 'disable', $_SESSION['access_token']);
-	echo '<br />';
-	echo $myFox->scenario($siteId, $scenarioId, 'play', $_SESSION['access_token']);
-	echo '<br />';
-	
-	
-	
-
-	
-?>
-<pre>
-	<?php print_r($_SESSION); ?>
-</pre>
+	}
