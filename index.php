@@ -7,6 +7,11 @@
  */
 define('BASEPATH', 'OK');
 
+//Installation du package
+if(file_exists('install.php'))
+	header('Location: install.php');
+	
+//Librairie myfox PHP
 if(!file_exists('wrapper.myfox.php'))
 	die('il manque le fichier wrapper.myfox.php');
 	
@@ -36,21 +41,7 @@ if(!file_exists('config.php'))
 		$_SESSION['expires_in'] = ($now + $parseToken->expires_in);
 		$_SESSION['refresh_token'] = $parseToken->refresh_token;
 	}
-	
-	//On test si l'id de la station est renseigné
-	if(empty($siteId))
-	{
-		$listClientSite = json_decode($myFox->listClientSite($_SESSION['access_token']));
-		foreach($listClientSite->payload as $payload)
-		{
-			foreach($payload as $items)
-			{
-				echo 'l\'identifiant de la centrale <b>' . $items->label . '</b> a pour identifiant: <b>' . $items->siteId .'</b>, merci de renseigner le fichier <b>config.php</b> !<br />';
-			}
-		}
-		exit();
-	}
-	
+		
 	/**
 	* URI
 	*/
@@ -104,11 +95,11 @@ if(!file_exists('config.php'))
 	
 	switch($commande)
 	{
-		case 'etat':
+		case 'getSecurity':
 			echo $myFox->getSecurity($siteId, $_SESSION['access_token']);
 			break;
 			
-		case 'protection':
+		case 'setSecurity':
 			echo $myFox->setSecurity($siteId, $parametre1, $_SESSION['access_token']);
 			break;
 			
